@@ -2,6 +2,12 @@
 
 A toolset for supercharging developer operations
 
+## CLI Installation
+
+```sh
+deno install https://code.jikno.com/devops@1.0.0/main.ts -A --name devops --force
+```
+
 ## CLI Usage
 
 ```
