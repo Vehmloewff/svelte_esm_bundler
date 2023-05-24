@@ -10,53 +10,12 @@ Deno.test('should detect strategy', () => {
 
 	asserts.assertEquals(strategy, {
 		showHelp: false,
-		logVerb: 'normal',
-		shouldDeploy: false,
-		shouldReload: true,
-		environment: 'staging',
+
 		actions: [
 			{ id: 'ci', arguments: ['foo', 'bar'] },
 			{ id: 'lint', arguments: ['foo'] },
 			{ id: 'd', arguments: ['foo'] },
 			{ id: 'beReal', arguments: ['foo', 'baz'] },
-		],
-	})
-})
-
-Deno.test('should prefer staging over prod', () => {
-	const strategy = inferStrategy({
-		options: ['task', 'production', 'staging'],
-		args: [],
-		taskNames: ['task'],
-	})
-
-	asserts.assertEquals(strategy, {
-		showHelp: false,
-		logVerb: 'normal',
-		shouldDeploy: false,
-		shouldReload: false,
-		environment: 'staging',
-		actions: [
-			{ id: 'task', arguments: [] },
-		],
-	})
-})
-
-Deno.test('should prefer verbose over quiet', () => {
-	const strategy = inferStrategy({
-		options: ['task', 'verbose', 'quiet'],
-		args: [],
-		taskNames: ['task'],
-	})
-
-	asserts.assertEquals(strategy, {
-		showHelp: false,
-		logVerb: 'verbose',
-		shouldDeploy: false,
-		shouldReload: false,
-		environment: 'dev',
-		actions: [
-			{ id: 'task', arguments: [] },
 		],
 	})
 })
@@ -80,10 +39,6 @@ Deno.test('should use the default task when no tasks are present if it exists', 
 
 	asserts.assertEquals(strategy, {
 		showHelp: false,
-		logVerb: 'normal',
-		shouldDeploy: false,
-		shouldReload: false,
-		environment: 'dev',
 		actions: [
 			{ id: 'default', arguments: ['some-argument', 'other-arg'] },
 		],
@@ -109,10 +64,6 @@ Deno.test('should quit everything and show help if it is requested', () => {
 
 	asserts.assertEquals(strategy, {
 		showHelp: true,
-		logVerb: 'normal',
-		shouldDeploy: false,
-		shouldReload: false,
-		environment: 'dev',
 		actions: [],
 	})
 })
@@ -126,10 +77,24 @@ Deno.test('should not show help if the help task is defined', () => {
 
 	asserts.assertEquals(strategy, {
 		showHelp: false,
-		logVerb: 'normal',
-		shouldDeploy: false,
-		shouldReload: false,
-		environment: 'dev',
 		actions: [{ id: 'help', arguments: [] }],
+	})
+})
+
+Deno.test('passed task names should correspond to camelCase defined tasks', () => {
+	const strategy = inferStrategy({
+		options: ['some-task', 'other_task', 'NEW_TASK', 'CrazyTask'],
+		args: [],
+		taskNames: ['someTask', 'otherTask', 'newTask', 'crazyTask'],
+	})
+
+	asserts.assertEquals(strategy, {
+		showHelp: false,
+		actions: [
+			{ id: 'someTask', arguments: [] },
+			{ id: 'otherTask', arguments: [] },
+			{ id: 'newTask', arguments: [] },
+			{ id: 'crazyTask', arguments: [] },
+		],
 	})
 })

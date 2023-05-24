@@ -1,6 +1,6 @@
 # Devops
 
-A toolset for supercharging developer operations
+Run TS functions as devops tasks. It's ridiculously simple.
 
 ## CLI Installation
 
@@ -20,15 +20,15 @@ Tasks:
   to camelCase before calling a function.
 
 Options:
-  --deploy         Tasks that support a deployment stage should deploy
-  --reload         Tasks that supports should reload any locally cached remote
-                   dependencies
+  --deploy         Tasks that support a deployment stage should deploy. Sets $DEPLOY to "1"
+  --reload         Tasks that supports should reload any locally cached remote dependencies.
+                   Sets $RELOAD_DEPS to "1"
   --production     Notify the tasks that they are running in a production
-                   environment.
+                   environment
   --staging        Notify the tasks that they are running in a staging
-                   environment.
-  --verbose        Display a verbose amount of logs
-  --quiet          Log as little as possible
+                   environment
+  --verbose        Display a verbose amount of logs. Sets $LOG_LEVEL to "verbose"
+  --quiet          Log as little as possible. Sets $LOG_LEVEL to "quiet"
 
 Arguments:
   Because all the CLI inputs so far have been in the form of traditional CLI
@@ -67,8 +67,21 @@ If no tasks are specified, the default export of the `devops.ts` file will be ca
 
 ### Environments
 
-The environment is always "development" unless the `--staging` or `--production` flags are passed.
+The environment is always `dev` unless the`--staging`or`--production` flags are passed.
+
+Task will be able to access the resolved environment in the `ENV` environment variable.
 
 ### Log Verb
 
 The log verb is always "normal" unless the `--quiet` or `--verbose` flags are passed.
+
+Task will be able to access the resolved environment in the `LOG_LEVEL` environment variable.
+
+## Contributing
+
+Hell yeah!
+
+```shell
+# fork and clone repo
+deno test . --watch
+```

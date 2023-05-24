@@ -1,11 +1,7 @@
-import { cases, Env, LogVerb } from './deps.ts'
+import { cases } from './deps.ts'
 
 export interface Strategy {
 	showHelp: boolean
-	environment: Env
-	logVerb: LogVerb
-	shouldDeploy: boolean
-	shouldReload: boolean
 	actions: Action[]
 }
 
@@ -23,17 +19,9 @@ export interface InferStrategyParams {
 export function inferStrategy(params: InferStrategyParams): Strategy {
 	const tasksToRun: string[] = []
 
-	let shouldDeploy = false
-	let shouldReload = false
-	let isQuiet = false
-	let isVerbose = false
-	let isProduction = false
-	let isStaging = false
-
 	for (const rawOption of params.options) {
 		const option = cases.camelCase(rawOption)
 
-		// TODO case it here
 		if (params.taskNames.includes(option)) {
 			tasksToRun.push(option)
 			continue
@@ -43,51 +31,20 @@ export function inferStrategy(params: InferStrategyParams): Strategy {
 			return {
 				showHelp: true,
 				actions: [],
-				environment: 'dev',
-				logVerb: 'normal',
-				shouldDeploy: false,
-				shouldReload: false,
 			}
 		}
 
-		if (option === 'deploy') {
-			shouldDeploy = true
-			continue
-		}
-
-		if (option === 'reload') {
-			shouldReload = true
-			continue
-		}
-
-		if (option === 'quiet') {
-			isQuiet = true
-			continue
-		}
-
-		if (option === 'verbose') {
-			isVerbose = true
-			continue
-		}
-
-		if (option === 'staging') {
-			isStaging = true
-			continue
-		}
-
-		if (option === 'production') {
-			isProduction = true
-			continue
-		}
+		// Ignore any options that have other uses
+		if (
+			option === 'production' || option === 'staging' || option === 'quiet' || option === 'verbose' || option === 'deploy' ||
+			option === 'reload'
+		) continue
 
 		throw new Error(`The task "${option}" is not exposed from devops.ts`)
 	}
 
-	const environment = isStaging ? 'staging' : isProduction ? 'production' : 'dev'
-	const logVerb = isVerbose ? 'verbose' : isQuiet ? 'quiet' : 'normal'
 	const actions = inferActions(tasksToRun, params.args)
-
-	const strategy: Strategy = { showHelp: false, actions, environment, logVerb, shouldDeploy, shouldReload }
+	const strategy: Strategy = { showHelp: false, actions }
 
 	const helpAction = actions.find((action) => action.id === 'help')
 	if (helpAction) return { ...strategy, actions: [helpAction] }

@@ -8,15 +8,15 @@ Tasks:
   to camelCase before calling a function.
 
 Options:
-  --deploy         Tasks that support a deployment stage should deploy
-  --reload         Tasks that supports should reload any locally cached remote
-                   dependencies
+  --deploy         Tasks that support a deployment stage should deploy. Sets $DEPLOY to "1"
+  --reload         Tasks that supports should reload any locally cached remote dependencies.
+                   Sets $RELOAD_DEPS to "1"
   --production     Notify the tasks that they are running in a production
-                   environment.
+                   environment
   --staging        Notify the tasks that they are running in a staging
-                   environment.
-  --verbose        Display a verbose amount of logs
-  --quiet          Log as little as possible
+                   environment
+  --verbose        Display a verbose amount of logs. Sets $LOG_LEVEL to "verbose"
+  --quiet          Log as little as possible. Sets $LOG_LEVEL to "quiet"
 
 Arguments:
   Because all the CLI inputs so far have been in the form of traditional CLI
